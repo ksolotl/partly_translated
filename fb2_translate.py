@@ -23,6 +23,7 @@ class FBTranslate:
     translate_words_count = 5
     translates_per_default = 15
     translates_per = 12
+    offline = False
 
     divine_symbols = ['.', ',', '!', '?', ':', ';', '...']
 
@@ -102,13 +103,16 @@ class FBTranslate:
         if string_line.isdigit():
             return True
 
-        if string_line.isdigit():
+        if string_line.istitle():
             return True
 
         return False
 
     def translate_word(self, word):
-        translation = self.translator.translate(word)
+        if not self.offline:
+            translation = self.translator.translate(word)
+        else:
+            translation = 'offline'
         if translation.strip().startswith('MYMEMORY WARNING'):
             raise Exception('Translation error')
 
@@ -296,17 +300,17 @@ class FBTranslate:
                     try:
                         translated_content = self.translate_line(content)
                         if translated_content != content:
-                            # parts = re.split(pattern1, translated_content)
-                            # for part in parts:
-                            #     if re.match(pattern1, part):
-                            #         translated_text = re.search(pattern2, part).group(2)
-                            #         tag = Tag(name='sub')
-                            #         tag.string = translated_text
-                            #         paragraph_contents.append(tag)
-                            #     else:
-                            #         paragraph_contents.append(NavigableString(part))
-
-                            paragraph.contents[content_index].replace_with(NavigableString(translated_content))
+                        #     # parts = re.split(pattern1, translated_content)
+                        #     # for part in parts:
+                        #     #     if re.match(pattern1, part):
+                        #     #         translated_text = re.search(pattern2, part).group(2)
+                        #     #         tag = Tag(name='sub')
+                        #     #         tag.string = translated_text
+                        #     #         paragraph_contents.append(tag)
+                        #     #     else:
+                        #     #         paragraph_contents.append(NavigableString(part))
+                        #
+                            paragraph_contents.append(translated_content)
                         else:
                             paragraph_contents.append(content)
                     except Exception as e:
